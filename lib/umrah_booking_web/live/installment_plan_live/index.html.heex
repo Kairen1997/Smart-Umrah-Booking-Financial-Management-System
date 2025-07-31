@@ -1,0 +1,49 @@
+<.header>
+  Listing Installment plans
+  <:actions>
+    <.link patch={~p"/installment_plans/new"}>
+      <.button>New Installment plan</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="installment_plans"
+  rows={@streams.installment_plans}
+  row_click={fn {_id, installment_plan} -> JS.navigate(~p"/installment_plans/#{installment_plan}") end}
+>
+  <:col :let={{_id, installment_plan}} label="Total price">{installment_plan.total_price}</:col>
+  <:col :let={{_id, installment_plan}} label="Deposit">{installment_plan.deposit}</:col>
+  <:col :let={{_id, installment_plan}} label="Balance">{installment_plan.balance}</:col>
+  <:col :let={{_id, installment_plan}} label="Monthly installment">{installment_plan.monthly_installment}</:col>
+  <:col :let={{_id, installment_plan}} label="Months needed">{installment_plan.months_needed}</:col>
+  <:col :let={{_id, installment_plan}} label="Start date">{installment_plan.start_date}</:col>
+  <:col :let={{_id, installment_plan}} label="Completion date">{installment_plan.completion_date}</:col>
+  <:col :let={{_id, installment_plan}} label="Paid">{installment_plan.paid}</:col>
+  <:col :let={{_id, installment_plan}} label="Next due date">{installment_plan.next_due_date}</:col>
+  <:action :let={{_id, installment_plan}}>
+    <div class="sr-only">
+      <.link navigate={~p"/installment_plans/#{installment_plan}"}>Show</.link>
+    </div>
+    <.link patch={~p"/installment_plans/#{installment_plan}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, installment_plan}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: installment_plan.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="installment_plan-modal" show on_cancel={JS.patch(~p"/installment_plans")}>
+  <.live_component
+    module={UmrahBookingWeb.InstallmentPlanLive.FormComponent}
+    id={@installment_plan.id || :new}
+    title={@page_title}
+    action={@live_action}
+    installment_plan={@installment_plan}
+    patch={~p"/installment_plans"}
+  />
+</.modal>

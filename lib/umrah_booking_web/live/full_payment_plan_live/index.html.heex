@@ -1,0 +1,42 @@
+<.header>
+  Listing Full payments plans
+  <:actions>
+    <.link patch={~p"/full_payments_plans/new"}>
+      <.button>New Full payment plan</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="full_payments_plans"
+  rows={@streams.full_payments_plans}
+  row_click={fn {_id, full_payment_plan} -> JS.navigate(~p"/full_payments_plans/#{full_payment_plan}") end}
+>
+  <:col :let={{_id, full_payment_plan}} label="Total price">{full_payment_plan.total_price}</:col>
+  <:col :let={{_id, full_payment_plan}} label="Paid at">{full_payment_plan.paid_at}</:col>
+  <:action :let={{_id, full_payment_plan}}>
+    <div class="sr-only">
+      <.link navigate={~p"/full_payments_plans/#{full_payment_plan}"}>Show</.link>
+    </div>
+    <.link patch={~p"/full_payments_plans/#{full_payment_plan}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, full_payment_plan}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: full_payment_plan.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="full_payment_plan-modal" show on_cancel={JS.patch(~p"/full_payments_plans")}>
+  <.live_component
+    module={UmrahBookingWeb.FullPaymentPlanLive.FormComponent}
+    id={@full_payment_plan.id || :new}
+    title={@page_title}
+    action={@live_action}
+    full_payment_plan={@full_payment_plan}
+    patch={~p"/full_payments_plans"}
+  />
+</.modal>

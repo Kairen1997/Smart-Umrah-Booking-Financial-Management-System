@@ -1,0 +1,41 @@
+<.header>
+  Booking {@booking.id}
+  <:subtitle>This is a booking record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/bookings/#{@booking}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit booking</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Deposit amount">{@booking.deposit_amount}</:item>
+  <:item title="Preferred departure date">{@booking.preferred_departure_date}</:item>
+  <:item title="Suggested departure date">{@booking.suggested_departure_date}</:item>
+  <:item title="Is affordable">{@booking.is_affordable}</:item>
+  <:item title="Affordability notes">{@booking.affordability_notes}</:item>
+  <:item title="Booking status">{@booking.booking_status}</:item>
+  <:item title="Final payment due date">{@booking.final_payment_due_date}</:item>
+  <:item title="Approval notes">{@booking.approval_notes}</:item>
+  <:item title="Payment completion status">{@booking.payment_completion_status}</:item>
+  <:item title="Booking reference">{@booking.booking_reference}</:item>
+  <:item title="Payment method">{@booking.payment_method}</:item>
+  <:item title="Cancel reason">{@booking.cancel_reason}</:item>
+  <:item title="Reminder sent">{@booking.reminder_sent}</:item>
+  <:item title="Created at">{@booking.created_at}</:item>
+  <:item title="Updated at">{@booking.updated_at}</:item>
+  <:item title="Deleted ad">{@booking.deleted_ad}</:item>
+</.list>
+
+<.back navigate={~p"/bookings"}>Back to bookings</.back>
+
+<.modal :if={@live_action == :edit} id="booking-modal" show on_cancel={JS.patch(~p"/bookings/#{@booking}")}>
+  <.live_component
+    module={UmrahBookingWeb.BookingLive.FormComponent}
+    id={@booking.id}
+    title={@page_title}
+    action={@live_action}
+    booking={@booking}
+    patch={~p"/bookings/#{@booking}"}
+  />
+</.modal>

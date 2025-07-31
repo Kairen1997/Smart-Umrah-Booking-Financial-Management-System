@@ -1,0 +1,34 @@
+<.header>
+  Installment plan {@installment_plan.id}
+  <:subtitle>This is a installment_plan record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/installment_plans/#{@installment_plan}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit installment_plan</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Total price">{@installment_plan.total_price}</:item>
+  <:item title="Deposit">{@installment_plan.deposit}</:item>
+  <:item title="Balance">{@installment_plan.balance}</:item>
+  <:item title="Monthly installment">{@installment_plan.monthly_installment}</:item>
+  <:item title="Months needed">{@installment_plan.months_needed}</:item>
+  <:item title="Start date">{@installment_plan.start_date}</:item>
+  <:item title="Completion date">{@installment_plan.completion_date}</:item>
+  <:item title="Paid">{@installment_plan.paid}</:item>
+  <:item title="Next due date">{@installment_plan.next_due_date}</:item>
+</.list>
+
+<.back navigate={~p"/installment_plans"}>Back to installment_plans</.back>
+
+<.modal :if={@live_action == :edit} id="installment_plan-modal" show on_cancel={JS.patch(~p"/installment_plans/#{@installment_plan}")}>
+  <.live_component
+    module={UmrahBookingWeb.InstallmentPlanLive.FormComponent}
+    id={@installment_plan.id}
+    title={@page_title}
+    action={@live_action}
+    installment_plan={@installment_plan}
+    patch={~p"/installment_plans/#{@installment_plan}"}
+  />
+</.modal>

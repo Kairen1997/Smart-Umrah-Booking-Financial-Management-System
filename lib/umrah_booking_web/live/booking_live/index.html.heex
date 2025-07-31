@@ -1,0 +1,56 @@
+<.header>
+  Listing Bookings
+  <:actions>
+    <.link patch={~p"/bookings/new"}>
+      <.button>New Booking</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="bookings"
+  rows={@streams.bookings}
+  row_click={fn {_id, booking} -> JS.navigate(~p"/bookings/#{booking}") end}
+>
+  <:col :let={{_id, booking}} label="Deposit amount">{booking.deposit_amount}</:col>
+  <:col :let={{_id, booking}} label="Preferred departure date">{booking.preferred_departure_date}</:col>
+  <:col :let={{_id, booking}} label="Suggested departure date">{booking.suggested_departure_date}</:col>
+  <:col :let={{_id, booking}} label="Is affordable">{booking.is_affordable}</:col>
+  <:col :let={{_id, booking}} label="Affordability notes">{booking.affordability_notes}</:col>
+  <:col :let={{_id, booking}} label="Booking status">{booking.booking_status}</:col>
+  <:col :let={{_id, booking}} label="Final payment due date">{booking.final_payment_due_date}</:col>
+  <:col :let={{_id, booking}} label="Approval notes">{booking.approval_notes}</:col>
+  <:col :let={{_id, booking}} label="Payment completion status">{booking.payment_completion_status}</:col>
+  <:col :let={{_id, booking}} label="Booking reference">{booking.booking_reference}</:col>
+  <:col :let={{_id, booking}} label="Payment method">{booking.payment_method}</:col>
+  <:col :let={{_id, booking}} label="Cancel reason">{booking.cancel_reason}</:col>
+  <:col :let={{_id, booking}} label="Reminder sent">{booking.reminder_sent}</:col>
+  <:col :let={{_id, booking}} label="Created at">{booking.created_at}</:col>
+  <:col :let={{_id, booking}} label="Updated at">{booking.updated_at}</:col>
+  <:col :let={{_id, booking}} label="Deleted ad">{booking.deleted_ad}</:col>
+  <:action :let={{_id, booking}}>
+    <div class="sr-only">
+      <.link navigate={~p"/bookings/#{booking}"}>Show</.link>
+    </div>
+    <.link patch={~p"/bookings/#{booking}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, booking}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: booking.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="booking-modal" show on_cancel={JS.patch(~p"/bookings")}>
+  <.live_component
+    module={UmrahBookingWeb.BookingLive.FormComponent}
+    id={@booking.id || :new}
+    title={@page_title}
+    action={@live_action}
+    booking={@booking}
+    patch={~p"/bookings"}
+  />
+</.modal>

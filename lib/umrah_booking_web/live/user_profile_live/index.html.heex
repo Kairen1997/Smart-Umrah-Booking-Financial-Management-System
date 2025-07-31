@@ -1,0 +1,46 @@
+<.header>
+  Listing Users profile
+  <:actions>
+    <.link patch={~p"/users_profile/new"}>
+      <.button>New User profile</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="users_profile"
+  rows={@streams.users_profile}
+  row_click={fn {_id, user_profile} -> JS.navigate(~p"/users_profile/#{user_profile}") end}
+>
+  <:col :let={{_id, user_profile}} label="Monthly income">{user_profile.monthly_income}</:col>
+  <:col :let={{_id, user_profile}} label="Ic number">{user_profile.IC_number}</:col>
+  <:col :let={{_id, user_profile}} label="Phone number">{user_profile.phone_number}</:col>
+  <:col :let={{_id, user_profile}} label="Gender">{user_profile.gender}</:col>
+  <:col :let={{_id, user_profile}} label="Birthdate">{user_profile.birthdate}</:col>
+  <:col :let={{_id, user_profile}} label="Address">{user_profile.address}</:col>
+  <:action :let={{_id, user_profile}}>
+    <div class="sr-only">
+      <.link navigate={~p"/users_profile/#{user_profile}"}>Show</.link>
+    </div>
+    <.link patch={~p"/users_profile/#{user_profile}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, user_profile}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: user_profile.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="user_profile-modal" show on_cancel={JS.patch(~p"/users_profile")}>
+  <.live_component
+    module={UmrahBookingWeb.UserProfileLive.FormComponent}
+    id={@user_profile.id || :new}
+    title={@page_title}
+    action={@live_action}
+    user_profile={@user_profile}
+    patch={~p"/users_profile"}
+  />
+</.modal>
